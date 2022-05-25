@@ -1,0 +1,36 @@
+version: '3'
+services:
+  php-apache:
+    image: 'php-apache-postgres'
+    restart: always
+    volumes:
+      - './apache-php-db:/var/www/html'
+      - './apache2logs:/var/log/apache2'
+    ports:
+      - '8080:80'
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.2
+
+  postgres:
+    image: 'postgres:latest'
+    restart: always
+    volumes:
+      - './postgres_data:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: md5
+      POSTGRES_PASSWORD: pepe
+      POSTGRES_DB: tpdocker
+    ports:
+      - '8081:5432'
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.3
+
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
